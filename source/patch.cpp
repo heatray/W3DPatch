@@ -2,8 +2,8 @@
 
 struct Screen
 {
-    // DWORD Width = 0x19FE00;
-    // DWORD Height = 0x19FE04;
+    int Width = 800;
+    int Height = 600;
     float AspectRatioX = 4.0f / 3.0f;
     float AspectRatioY = 3.0f / 4.0f;
 } Screen;
@@ -31,13 +31,21 @@ struct GameSpy
     char SdkDev[128] = "sdkdev.";          // SDK Dev
 } GS;
 
+DWORD* Worms3dApp__c_pTheInstance = (DWORD*)0x7ADDE4;
 DWORD AspectRatioCodeCaveExit = 0x629F72;
+DWORD FrustumCodeCaveExit = 0x44ADBB;
 
 void __declspec(naked) AspectRatioCodeCave()
 {
     __asm {
-        fild    dword ptr ds : [0x19FE04]
-        fild    dword ptr ds : [0x19FE00]
+        mov     ecx, dword ptr ds : [0x7ADDE4]
+        mov     ecx, [ecx + 0x20]
+        mov     Screen.Width, ecx
+        mov     ecx, dword ptr ds : [0x7ADDE4]
+        mov     ecx, [ecx + 0x24]
+        mov     Screen.Height, ecx
+        fild    dword ptr ds : [Screen.Height]
+        fild    dword ptr ds : [Screen.Width]
         fdivp   st(1), st
         fld     dword ptr ds : [Screen.AspectRatioY]
         fcomip  st, st(1)
@@ -47,8 +55,8 @@ void __declspec(naked) AspectRatioCodeCave()
 
     AspectRatioX:
         jb      AspectRatioY
-        fild    dword ptr ds : [0x19FE00]
-        fild    dword ptr ds : [0x19FE04]
+        fild    dword ptr ds : [Screen.Width]
+        fild    dword ptr ds : [Screen.Height]
         fdivp   st(1), st
         fstp    dword ptr ds : [Screen.AspectRatioX]
         fld     dword ptr ds : [Screen.AspectRatioX]
@@ -60,8 +68,8 @@ void __declspec(naked) AspectRatioCodeCave()
         jmp     AspectRatioCodeCaveExit
 
     AspectRatioY:
-        fild    dword ptr ds : [0x19FE04]
-        fild    dword ptr ds : [0x19FE00]
+        fild    dword ptr ds : [Screen.Height]
+        fild    dword ptr ds : [Screen.Width]
         fdivp   st(1), st
         fstp    dword ptr ds : [Screen.AspectRatioY]
         fld     dword ptr ds : [Screen.AspectRatioY]
@@ -74,19 +82,17 @@ void __declspec(naked) AspectRatioCodeCave()
     }
 }
 
-DWORD FrustumCodeCaveExit = 0x44ADBB;
-
 void __declspec(naked) FrustumCodeCave()
 {
     __asm {
         fld     dword ptr ds : [Frustum.Left]
-        fstp    dword ptr ds : [esp+0x30]
+        fstp    dword ptr ds : [esp + 0x30]
         fld     dword ptr ds : [Frustum.Right]
-        fstp    dword ptr ds : [esp+0x34]
+        fstp    dword ptr ds : [esp + 0x34]
         fld     dword ptr ds : [Frustum.Bottom]
-        fstp    dword ptr ds : [esp+0x38]
+        fstp    dword ptr ds : [esp + 0x38]
         fld     dword ptr ds : [Frustum.Top]
-        fstp    dword ptr ds : [esp+0x3C]
+        fstp    dword ptr ds : [esp + 0x3C]
         jmp     FrustumCodeCaveExit
     }
 }
