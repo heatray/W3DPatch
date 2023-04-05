@@ -20,16 +20,22 @@ workspace "W3DAnniversaryPatch"
    includedirs { "source/injector" }
    includedirs { "source/inireader" }
 
+   date = os.outputof("date /t")
+   yy = tonumber(string.sub(date, 9, 10))
+   mm = tonumber(string.sub(date, 4, 5))
+   dd = tonumber(string.sub(date, 1, 2))
+   build = 0
+
    defines {
-      "rsc_MajorVersion=22",
-      "rsc_MinorVersion=10",
-      "rsc_RevisionID=11",
-      "rsc_BuildID=1"
+      "rsc_MajorVersion=%{yy}",
+      "rsc_MinorVersion=%{mm}",
+      "rsc_RevisionID=%{dd}",
+      "rsc_BuildID=%{build}"
    }
    defines {
-      "rsc_StringVersion=\"22.10.11.1\"",
+      "rsc_StringVersion=\"%{yy}.%{mm}.%{dd}.%{build}\"",
       "rsc_InternalName=\"%{prj.name}\"",
-      "rsc_ProductName=\"Community Patch\"",
+      "rsc_ProductName=\"Anniversary Patch\"",
       "rsc_OriginalFilename=\"%{prj.name}.dll\"",
       "rsc_CompanyName=\"heatray\"",
       "rsc_LegalCopyright=\"Copyright (C) heatray\"",
