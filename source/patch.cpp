@@ -34,6 +34,7 @@ struct GameSpy
 DWORD* Worms3dApp__c_pTheInstance = (DWORD*)0x7ADDE4;
 DWORD AspectRatioCodeCaveExit = 0x629F72;
 DWORD FrustumCodeCaveExit = 0x44ADBB;
+DWORD SetFromSceneCameraCodeCaveExit = 0x63B469;
 
 void __declspec(naked) AspectRatioCodeCave()
 {
@@ -97,6 +98,20 @@ void __declspec(naked) FrustumCodeCave()
     }
 }
 
+void __declspec(naked) SetFromSceneCameraCodeCave()
+{
+    __asm {
+        fld     dword ptr ds : [eax + 0x30]
+        fmul    dword ptr ds : [Screen.AspectRatioX]
+        push    edi
+        fmul    st, st(1)
+        fstp    dword ptr ds : [ebp + 0xC]
+        fld     dword ptr ds : [eax + 0x2C]
+        fmul    dword ptr ds : [Screen.AspectRatioY]
+        jmp     SetFromSceneCameraCodeCaveExit
+    }
+}
+
 void Init()
 {
     CIniReader iniReader("");
@@ -112,6 +127,7 @@ void Init()
         injector::MakeJMP(0x44AD9B, FrustumCodeCave, true);
         injector::WriteMemory<FLOAT*>(0x44AE0B, &Frustum.Right, true);
         injector::WriteMemory<FLOAT*>(0x44AE2B, &Frustum.Top, true);
+        injector::MakeJMP(0x63B45D, SetFromSceneCameraCodeCave, true);
     }
 
     if (FrameInterval != 16)
