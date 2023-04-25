@@ -128,6 +128,7 @@ void Init()
         injector::WriteMemory<FLOAT*>(0x44AE0B, &Frustum.Right, true);
         injector::WriteMemory<FLOAT*>(0x44AE2B, &Frustum.Top, true);
         injector::MakeJMP(0x63B45D, SetFromSceneCameraCodeCave, true);
+        injector::WriteMemory<FLOAT>(0x719F34, 900.0f, true);
     }
 
     if (FrameInterval != 16)
