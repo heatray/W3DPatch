@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "dik.h"
 
+bool InGame_BlimpCamMouseModeSwitch;
 int InGame_Fuse;
 int WormAiming_AimUp, \
     WormAiming_AimDown, \
@@ -40,6 +41,7 @@ void ReadSettings()
 {
     CIniReader iniReader("");
 
+    InGame_BlimpCamMouseModeSwitch = iniReader.ReadInteger("InGame", "BlimpCamMouseModeSwitch", 0) == 1;
     InGame_Fuse = iniReader.ReadInteger("InGame", "Input.Fuse", DIK_F);
 
     WormAiming_AimUp       = iniReader.ReadInteger("WormAiming", "Input.AimUp",        DIK_UP);
@@ -107,6 +109,13 @@ void Init()
     injector::WriteMemory(0x45742B, WormFPAiming_TurnRight, true);
 
     // DefaultInGame
+    if (InGame_BlimpCamMouseModeSwitch)
+    {
+        injector::WriteMemory<BYTE>(0x53E256, 0x74, true);
+        injector::WriteMemory<BYTE>(0x53E2A6, 0x74, true);
+        injector::WriteMemory<BYTE>(0x53E445, 0x75, true);
+        injector::WriteMemory<BYTE>(0x53E54A, 0x75, true);
+    }
     // injector::WriteMemory(0x458B22, InGame_RotateLeft, true);
     // injector::WriteMemory(0x458BC2, InGame_RotateRight, true);
     // injector::WriteMemory(0x458C62, InGame_RotateDown, true);
