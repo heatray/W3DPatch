@@ -17,6 +17,8 @@ struct Frustum
 bool AspectRatioFix;
 uint8_t FrameInterval;
 
+bool NoMusic, NoMovies, NoMoviesIntro;
+
 bool Borderless;
 
 std::string GameSpyHost;
@@ -118,6 +120,9 @@ void Init()
 
     AspectRatioFix = iniReader.ReadInteger("Main", "AspectRatioFix", 0) == 1;
     FrameInterval = iniReader.ReadInteger("Main", "FrameInterval", 16);
+    NoMusic = iniReader.ReadInteger("Options", "NoMusic", 0) == 1;
+    NoMovies = iniReader.ReadInteger("Options", "NoMovies", 0) == 1;
+    NoMoviesIntro = iniReader.ReadInteger("Options", "NoMoviesIntro", 0) == 1;
     Borderless = iniReader.ReadInteger("Window", "Borderless", 0) == 1;
     GameSpyHost = iniReader.ReadString("GameSpy", "Host", "gamespy.com");
 
@@ -135,6 +140,28 @@ void Init()
     {
         injector::WriteMemory<BYTE>(0x44B53D, FrameInterval, true);
         injector::WriteMemory<BYTE>(0x44B541, FrameInterval, true);
+    }
+
+    if (NoMusic)
+    {
+        injector::WriteMemory<BYTE>(0x76FC60, 0x0, true);
+    }
+    if (NoMovies || NoMoviesIntro)
+    {
+        BYTE OptionsByte1 = 0x93;
+        BYTE OptionsByte2 = 0x13;
+        if (NoMoviesIntro)
+        {
+            OptionsByte1 &= ~0x1;
+            OptionsByte2 &= ~0x1;
+        }
+        if (NoMovies)
+        {
+            OptionsByte1 &= ~0x2;
+            OptionsByte2 &= ~0x2;
+        }
+        injector::WriteMemory<BYTE>(0x44A321, OptionsByte1, true);
+        injector::WriteMemory<BYTE>(0x44A323, OptionsByte2, true);
     }
 
     if (Borderless)
