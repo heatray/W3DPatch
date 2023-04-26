@@ -64,3 +64,8 @@ project "W3D.Unlimiter"
    files { "source/unlimiter.cpp" }
 
    defines { "rsc_FileDescription=\"Unlimiter for Worms 3D\"" }
+
+project "W3D.Loader"
+   files { "source/loader.cpp" }
+
+   defines { "rsc_FileDescription=\"Unlimiter for Worms 3D\"" }

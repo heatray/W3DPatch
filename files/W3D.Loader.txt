@@ -1,0 +1,12 @@
+Place modified xom or tga files here from the following paths:
+- Data
+- Data/Themes
+- Data/Effects
+- Data/Frontend/Levels
+- Data/Frontend/Wormapedia
+- Data/scripts
+- Data/Logos
+- Data/Maps
+- Data/Language/PC
+- Data/Bundles
+and they will be loaded by the game instead of original ones.
