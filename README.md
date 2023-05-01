@@ -8,29 +8,31 @@ Supported exe versions: **Euro v.1073 DEViANCE**.
 
 ### W3D.Patch
 
-* Aspect ratio fix (Hor+ or Vert+)
-* FPS unlocking
-* Option to disable music
-* Option to disable movies
-* Option to disable intro movies
-* Option for windowed borderless mode
-* Option to change GameSpy server address (openspy.net preconfigured)
+* **AspectRatioFix** - applies aspect ratio patches (Hor+/Vert+)
+* **FrameInterval** - changes the delay between frames to help with performance issues
+* **NoMusic** - disables background music
+* **NoMovies** - disables all movies
+* **NoMoviesIntro** - disables intro movies
+* **Borderless** - changes windowed borderless mode
+* **Host** - changes GameSpy server address (`openspy.net` by default)
 
 ### W3D.Input
 
-* Сustomizing key bindings
-* Switching blimp camera mouse control to movement, as in WF/W4
+* Allows to configure key bindings
+* **BlimpCamMouseModeSwitch** - switches blimp camera mouse control to movement, as in WF/W4
 
 ### W3D.Loader
 
-* Adds `Data2` in "SearchPath", place modified xom or tga files to `Data2` directory and they will be loaded by the game instead of original ones.
+* Allows to load modified resources without replacing original files  
+Place modified xom or tga files in the `Data2` directory
 
 ### W3D.Unlimiter
 
-* Game configuration and resizing memory pools
+* Allows to expand memory pools
+* Allows to change game configuration
 
 ## Installation
 
-Copy content of archive to the `Worms 3D\bin` directory.
+Copy content of archive to the Worms 3D game directory.
 
 Check the ini files for available features.
