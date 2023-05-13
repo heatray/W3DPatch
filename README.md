@@ -36,3 +36,36 @@ Place modified xom or tga files in the `Data2` directory
 Copy content of archive to the Worms 3D game directory.
 
 Check the ini files for available features.
+
+## Screenshots
+
+<details><summary><b>Title</b></summary>
+
+![](.github/images/title_1350x1080.jpg "5:4")
+![](.github/images/title_1440x1080.jpg "4:3")
+![](.github/images/title_1728x1080.jpg "16:10")
+![](.github/images/title_1920x1080.jpg "16:9")
+![](.github/images/title_2560x1080.jpg "21:9")
+![](.github/images/title_3840x1080.jpg "32:9")
+
+</details>
+<details><summary><b>Frontend</b></summary>
+
+![](.github/images/frontend_1350x1080.jpg "5:4")
+![](.github/images/frontend_1440x1080.jpg "4:3")
+![](.github/images/frontend_1728x1080.jpg "16:10")
+![](.github/images/frontend_1920x1080.jpg "16:9")
+![](.github/images/frontend_2560x1080.jpg "21:9")
+![](.github/images/frontend_3840x1080.jpg "32:9")
+
+</details>
+<details><summary><b>In game</b></summary>
+
+![](.github/images/ingame_1350x1080.jpg "5:4")
+![](.github/images/ingame_1440x1080.jpg "4:3")
+![](.github/images/ingame_1728x1080.jpg "16:10")
+![](.github/images/ingame_1920x1080.jpg "16:9")
+![](.github/images/ingame_2560x1080.jpg "21:9")
+![](.github/images/ingame_3840x1080.jpg "32:9")
+
+</details>
