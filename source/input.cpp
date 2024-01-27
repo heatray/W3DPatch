@@ -33,6 +33,12 @@ int UtilityGirder_Place, \
     UtilityGirder_Rotate_Backward, \
     UtilityGirder_Rotate_Left, \
     UtilityGirder_Rotate_Right;
+int Flying_Pitch_Up, \
+    Flying_Pitch_Down, \
+    Flying_Roll_Left, \
+    Flying_Roll_Right, \
+    Flying_Yaw_Left, \
+    Flying_Yaw_Right;
 int Fire_Fire;
 int UtilityFire_FireUtil, \
     UtilityFire_Fire;
@@ -78,6 +84,13 @@ void ReadSettings()
     UtilityGirder_Move_Backward   = iniReader.ReadInteger("UtilityGirder", "Girder.Move.Backward",   DIK_DOWN);
     UtilityGirder_Move_Left       = iniReader.ReadInteger("UtilityGirder", "Girder.Move.Left",       DIK_LEFT);
     UtilityGirder_Move_Right      = iniReader.ReadInteger("UtilityGirder", "Girder.Move.Right",      DIK_RIGHT);
+
+    Flying_Pitch_Up   = iniReader.ReadInteger("Flying", "Fly.Pitch.Up",   DIK_UP);
+    Flying_Pitch_Down = iniReader.ReadInteger("Flying", "Fly.Pitch.Down", DIK_DOWN);
+    Flying_Roll_Left  = iniReader.ReadInteger("Flying", "Fly.Roll.Left",  DIK_LEFT);
+    Flying_Roll_Right = iniReader.ReadInteger("Flying", "Fly.Roll.Right", DIK_RIGHT);
+    Flying_Yaw_Left   = iniReader.ReadInteger("Flying", "Fly.Yaw.Left",   DIK_A);
+    Flying_Yaw_Right  = iniReader.ReadInteger("Flying", "Fly.Yaw.Right",  DIK_D);
 
     Fire_Fire = iniReader.ReadInteger("Fire", "Input.Fire", DIK_SPACE);
 
@@ -156,6 +169,18 @@ void Init()
     injector::WriteMemory(0x45B8FE, UtilityGirder_Move_Backward, true);
     injector::WriteMemory(0x45B99E, UtilityGirder_Move_Left, true);
     injector::WriteMemory(0x45BA3E, UtilityGirder_Move_Right, true);
+
+    // Flying
+    injector::WriteMemory(0x45C5A6, Flying_Pitch_Up, true);
+    injector::WriteMemory(0x45C608, Flying_Pitch_Up, true);
+    injector::WriteMemory(0x45C658, Flying_Pitch_Down, true);
+    injector::WriteMemory(0x45C6A9, Flying_Pitch_Down, true);
+    injector::WriteMemory(0x45C6F9, Flying_Roll_Left, true);
+    injector::WriteMemory(0x45C74A, Flying_Roll_Left, true);
+    injector::WriteMemory(0x45C79A, Flying_Roll_Right, true);
+    injector::WriteMemory(0x45C7EB, Flying_Roll_Right, true);
+    injector::WriteMemory(0x45C82C, Flying_Yaw_Left, true);
+    injector::WriteMemory(0x45C8CC, Flying_Yaw_Right, true);
 
     // UtilityFire
     injector::WriteMemory(0x45D337, UtilityFire_FireUtil, true);
