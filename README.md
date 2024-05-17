@@ -2,7 +2,9 @@
 
 [![GitHub latest tag)](https://img.shields.io/github/v/tag/heatray/W3DPatch?label=latest)](https://github.com/heatray/W3DPatch/releases/latest) [![GitHub all releases](https://img.shields.io/github/downloads/heatray/W3DPatch/total)](https://github.com/heatray/W3DPatch/releases) [![Discord](https://img.shields.io/discord/455020679696482306?label=W4Tweaks&logo=discord&logoColor=white)](https://discord.gg/sdKqGu6)
 
-Supported exe versions: **Euro v.1073 DEViANCE**.
+Unofficial patch for Worms 3D.
+
+Supported EXE versions: **Euro v.1073 DEViANCE**.
 
 ## Features
 
@@ -19,12 +21,12 @@ Supported exe versions: **Euro v.1073 DEViANCE**.
 ### W3D.Input
 
 * Allows to configure key bindings
-* **BlimpCamMouseModeSwitch** - switches blimp camera mouse control to movement, as in WF/W4
+* **BlimpCamMouseModeSwitch** - switches blimp camera mouse control to movement, as in WF/W4 (not online compatible)
 
 ### W3D.Loader
 
 * Allows to load modified resources without replacing original files  
-Place modified xom or tga files in the `Data2` directory
+Place modified XOM or TGA files in the `Data2` directory
 
 ### W3D.Unlimiter
 

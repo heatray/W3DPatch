@@ -1,3 +1,5 @@
+============================== W3D.Loader ==============================
+
 Place modified xom or tga files here from the following paths:
 - Data
 - Data/Themes
