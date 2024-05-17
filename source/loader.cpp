@@ -22,10 +22,10 @@ void __declspec(naked) InitOptionalPathsCodeCave()
         mov     ecx, dword ptr ss : [esp + 0x4]
         add     ecx, 0xFFFFFFFA
         dec     word ptr ds : [ecx]
-        cmp     word ptr ds : [ecx], 0
+        cmp     word ptr ds : [ecx] , 0
         jne     InitPathsEnd
         call    XString__FreeRep
-    InitPathsEnd:
+    InitPathsEnd :
         pop     esi
         pop     ecx
         ret
@@ -41,7 +41,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
     if (reason == DLL_PROCESS_ATTACH)
     {
-        Init();
+        if (strcmp((char*)0x70ADBC, "Worms 3D") == 0)
+        {
+            Init();
+        }
     }
     return TRUE;
 }

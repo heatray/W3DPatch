@@ -87,8 +87,8 @@ std::string XOM_EventLog_Pipe_MaxSendInterval, \
     XOM_ExportClasses;
 
 struct ConfigEntry {
-    char *Key;
-    char *Value;
+    char* Key;
+    char* Value;
 };
 ConfigEntry l_Config[86];
 uint8_t i_Config = 0;
@@ -331,7 +331,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
     if (reason == DLL_PROCESS_ATTACH)
     {
-        Init();
+        if (strcmp((char*)0x70ADBC, "Worms 3D") == 0)
+        {
+            Init();
+        }
     }
     return TRUE;
 }

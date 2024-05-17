@@ -56,7 +56,7 @@ void __declspec(naked) AspectRatioCodeCave()
         jne     AspectRatioX
         jmp     AspectRatioCodeCaveExit
 
-    AspectRatioX:
+    AspectRatioX :
         jb      AspectRatioY
         fild    dword ptr ds : [Screen.Width]
         fild    dword ptr ds : [Screen.Height]
@@ -70,7 +70,7 @@ void __declspec(naked) AspectRatioCodeCave()
         fstp    dword ptr ds : [Frustum.Right]
         jmp     AspectRatioCodeCaveExit
 
-    AspectRatioY:
+    AspectRatioY :
         fild    dword ptr ds : [Screen.Height]
         fild    dword ptr ds : [Screen.Width]
         fdivp   st(1), st
@@ -105,11 +105,11 @@ void __declspec(naked) SetFromSceneCameraCodeCave()
     __asm {
         fld     dword ptr ds : [eax + 0x30]
         fmul    dword ptr ds : [Screen.AspectRatioX]
-        push    edi
         fmul    st, st(1)
         fstp    dword ptr ds : [ebp + 0xC]
         fld     dword ptr ds : [eax + 0x2C]
         fmul    dword ptr ds : [Screen.AspectRatioY]
+        push    edi
         jmp     SetFromSceneCameraCodeCaveExit
     }
 }
@@ -196,7 +196,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
     if (reason == DLL_PROCESS_ATTACH)
     {
-        Init();
+        if (strcmp((char*)0x70ADBC, "Worms 3D") == 0)
+        {
+            Init();
+        }
     }
     return TRUE;
 }
