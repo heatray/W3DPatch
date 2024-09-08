@@ -1,5 +1,8 @@
 #include "stdafx.h"
 
+float AspectRatio43 = 4.0f / 3.0f;
+float AspectRatio34 = 3.0f / 4.0f;
+float F2 = 2.0f;
 struct Screen
 {
     int Width = 800;
@@ -14,6 +17,13 @@ struct Frustum
     float Bottom = -0.48f;
     float Top = 0.48f;
 } Frustum;
+struct MovieRect
+{
+    int vX = 0;
+    int vY = 0;
+    int vW = 640;
+    int vH = 480;
+} MovieRect;
 bool AspectRatioFix;
 uint8_t FrameInterval;
 
@@ -40,6 +50,7 @@ DWORD* Worms3dApp__c_pTheInstance = (DWORD*)0x7ADDE4;
 DWORD AspectRatioCodeCaveExit = 0x629F72;
 DWORD FrustumCodeCaveExit = 0x44ADBB;
 DWORD SetFromSceneCameraCodeCaveExit = 0x63B469;
+DWORD MoviePlayerPCCodeCaveExit = 0x61A06F;
 
 void __declspec(naked) AspectRatioCodeCave()
 {
@@ -117,6 +128,65 @@ void __declspec(naked) SetFromSceneCameraCodeCave()
     }
 }
 
+void __declspec(naked) MoviePlayerPCCodeCave()
+{
+    __asm {
+        mov     edx, dword ptr ss : [esp + 0x18] // Right
+        mov     dword ptr ds : [MovieRect.vW] , edx
+        mov     edx, dword ptr ss : [esp + 0x1C] // Bottom
+        mov     dword ptr ds : [MovieRect.vH] , edx
+        fild    dword ptr ds : [MovieRect.vH]
+        fidiv   dword ptr ds : [MovieRect.vW]
+        fld     dword ptr ds : [AspectRatio34]
+        fcomip  st(0), st(1)
+        fstp    st(0)
+        jne     AspectRatioX
+        jmp     MoviePlayerEnd
+
+    AspectRatioX :
+        // vW = B * (4 / 3)     vH = B
+        // vX = (R - vW) / 2    vY = 0
+        jb      AspectRatioY
+        fild    dword ptr ss : [esp + 0x18] // Width
+        fild    dword ptr ss : [esp + 0x1C] // Height
+        fld     dword ptr ds : [AspectRatio43]
+        fmul    st(0), st(1)
+        fistp   dword ptr ds : [MovieRect.vW]
+        fistp   dword ptr ds : [MovieRect.vH]
+        fisub   dword ptr ds : [MovieRect.vW]
+        fld     dword ptr ds : [F2]
+        fdivp   st(1), st(0)
+        fistp   dword ptr ds : [MovieRect.vX]
+        jmp     MoviePlayerEnd
+
+    AspectRatioY :
+        // vW = R    vH = R * (3 / 4)
+        // vX = 0    vY = (B - vH) / 2
+        fild    dword ptr ss : [esp + 0x1C] // Height
+        fild    dword ptr ss : [esp + 0x18] // Width
+        fld     dword ptr ds : [AspectRatio34]
+        fmul    st(0), st(1)
+        fistp   dword ptr ds : [MovieRect.vH]
+        fistp   dword ptr ds : [MovieRect.vW]
+        fisub   dword ptr ds : [MovieRect.vH]
+        fld     dword ptr ds : [F2]
+        fdivp   st(1), st(0)
+        fistp   dword ptr ds : [MovieRect.vY]
+        jmp     MoviePlayerEnd
+
+    MoviePlayerEnd :
+        mov     edx, dword ptr ds : [MovieRect.vH]
+        push    edx
+        mov     edx, dword ptr ds : [MovieRect.vW]
+        push    edx
+        mov     edx, dword ptr ds : [MovieRect.vY]
+        push    edx
+        mov     edx, dword ptr ds : [MovieRect.vX]
+        push    edx
+        jmp     MoviePlayerPCCodeCaveExit
+    }
+}
+
 void Init()
 {
     CIniReader iniReader("");
@@ -150,6 +220,9 @@ void Init()
 
         // EfmvBorderEntity::EfmvBorderEntity
         injector::WriteMemory<FLOAT*>(0x4EC2B6, &EFMV_Border_Width, true);
+
+        // MoviePlayerPC::Open
+        injector::MakeJMP(0x61A05F, MoviePlayerPCCodeCave);
     }
 
     if (FrameInterval != 16)
