@@ -1,6 +1,6 @@
 # Worms 3D Anniversary Patch
 
-[![GitHub latest tag)](https://img.shields.io/github/v/tag/heatray/W3DPatch?label=latest)](https://github.com/heatray/W3DPatch/releases/latest) [![GitHub all releases](https://img.shields.io/github/downloads/heatray/W3DPatch/total)](https://github.com/heatray/W3DPatch/releases) [![Discord](https://img.shields.io/discord/455020679696482306?label=W4Tweaks&logo=discord&logoColor=white)](https://discord.gg/sdKqGu6)
+[![GitHub latest tag)](https://img.shields.io/github/v/tag/heatray/W3DPatch?label=latest)](https://github.com/heatray/W3DPatch/releases/latest) [![GitHub all releases](https://img.shields.io/github/downloads/heatray/W3DPatch/total)](https://github.com/heatray/W3DPatch/releases) [![Discord](https://img.shields.io/discord/455020679696482306?label=W4Tweaks&logo=discord&logoColor=white)](https://discord.gg/GvJ38qEEAQ)
 
 Unofficial patch for Worms 3D.
 
