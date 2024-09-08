@@ -33,6 +33,9 @@ struct GameSpy
     char SdkDev[128] = "sdkdev.";          // SDK Dev
 } GS;
 
+float FE_Textbox_Back_Scale = 900.0f;
+float EFMV_Border_Width = 900.0f;
+
 DWORD* Worms3dApp__c_pTheInstance = (DWORD*)0x7ADDE4;
 DWORD AspectRatioCodeCaveExit = 0x629F72;
 DWORD FrustumCodeCaveExit = 0x44ADBB;
@@ -128,16 +131,30 @@ void Init()
 
     if (AspectRatioFix)
     {
-        injector::MakeJMP(0x629F6D, AspectRatioCodeCave, true);
-        injector::MakeJMP(0x44AD9B, FrustumCodeCave, true);
+        // Worms3dApp::Initialize
+        injector::MakeJMP(0x629F6D, AspectRatioCodeCave);
+
+        // Worms3dApp::InitScene
         injector::WriteMemory<FLOAT*>(0x44AE0B, &Frustum.Right, true);
         injector::WriteMemory<FLOAT*>(0x44AE2B, &Frustum.Top, true);
-        injector::MakeJMP(0x63B45D, SetFromSceneCameraCodeCave, true);
-        injector::WriteMemory<FLOAT>(0x719F34, 900.0f, true);
+
+        // XomHelp::Xom3dAppBase::CreateCamera
+        injector::MakeJMP(0x44AD9B, FrustumCodeCave);
+
+        // XCamera::SetFromSceneCamera
+        injector::MakeJMP(0x63B45D, SetFromSceneCameraCodeCave);
+
+        // PopUpEntity::Initialize
+        injector::WriteMemory<FLOAT>(0x5D648C, FE_Textbox_Back_Scale, true);
+        injector::WriteMemory<FLOAT>(0x5D6494, FE_Textbox_Back_Scale, true);
+
+        // EfmvBorderEntity::EfmvBorderEntity
+        injector::WriteMemory<FLOAT*>(0x4EC2B6, &EFMV_Border_Width, true);
     }
 
     if (FrameInterval != 16)
     {
+        // Worms3dApp::UpdateScene
         injector::WriteMemory<BYTE>(0x44B53D, FrameInterval, true);
         injector::WriteMemory<BYTE>(0x44B541, FrameInterval, true);
     }
