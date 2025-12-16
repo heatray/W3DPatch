@@ -20,10 +20,9 @@ workspace "W3DAnniversaryPatch"
    includedirs { "source/injector" }
    includedirs { "source/inireader" }
 
-   date = os.outputof("date /t")
-   yy = tonumber(string.sub(date, 9, 10))
-   mm = tonumber(string.sub(date, 4, 5))
-   dd = tonumber(string.sub(date, 1, 2))
+   yy = os.date("%y")
+   mm = os.date("%m")
+   dd = 0 -- os.date("%d")
    build = 0
 
    defines {
@@ -52,20 +51,16 @@ workspace "W3DAnniversaryPatch"
 
 project "W3D.Patch"
    files { "source/patch.cpp" }
-
    defines { "rsc_FileDescription=\"Patch for Worms 3D\"" }
 
 project "W3D.Input"
    files { "source/input.cpp" }
-
    defines { "rsc_FileDescription=\"Input for Worms 3D\"" }
 
 project "W3D.Unlimiter"
    files { "source/unlimiter.cpp" }
-
    defines { "rsc_FileDescription=\"Unlimiter for Worms 3D\"" }
 
 project "W3D.Loader"
    files { "source/loader.cpp" }
-
    defines { "rsc_FileDescription=\"Loader for Worms 3D\"" }
