@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 
 float AspectRatio43 = 4.0f / 3.0f;
 float AspectRatio34 = 3.0f / 4.0f;
@@ -24,7 +26,7 @@ struct MovieRect
     int vW = 640;
     int vH = 480;
 } MovieRect;
-bool AspectRatioFix;
+bool AspectRatioFix, SleepFix;
 uint8_t FrameInterval;
 
 bool NoMusic, NoMovies, NoMoviesIntro;
@@ -192,6 +194,7 @@ void Init()
     CIniReader iniReader("");
 
     AspectRatioFix = iniReader.ReadInteger("Main", "AspectRatioFix", 0) == 1;
+    SleepFix = iniReader.ReadInteger("Main", "SleepFix", 0) == 1;
     FrameInterval = iniReader.ReadInteger("Main", "FrameInterval", 16);
     NoMusic = iniReader.ReadInteger("Options", "NoMusic", 0) == 1;
     NoMovies = iniReader.ReadInteger("Options", "NoMovies", 0) == 1;
@@ -223,6 +226,11 @@ void Init()
 
         // MoviePlayerPC::Open
         injector::MakeJMP(0x61A05F, MoviePlayerPCCodeCave);
+    }
+
+    if (SleepFix)
+    {
+        timeBeginPeriod(1);
     }
 
     if (FrameInterval != 16)
