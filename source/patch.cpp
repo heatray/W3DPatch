@@ -5,7 +5,6 @@
 bool AspectRatioFix, SleepFix, Borderless, NoMusic, NoVoices;
 char Fullscreen, NoAutoLoop, Options[40];
 uint8_t FrameInterval;
-std::string GameSpyHost;
 
 struct Worms3dApp
 {
@@ -31,6 +30,8 @@ struct Frustum
     float Top = 0.48f;
 } Frustum;
 tagRECT MovieRect;
+
+std::string GameSpyHost, GameSpyWebPath;
 struct GameSpy
 {
     std::string ServerBrowser = "%s.ms%d.";  // Master - Server Browser
@@ -40,7 +41,9 @@ struct GameSpy
     std::string PeerChat = "peerchat.";      // Chat
     std::string GameStats = "gamestats.";    // Game Statistics
     std::string SdkDev = "sdkdev.";          // SDK Dev
-};
+    std::string MotdUrl, TipUrl, SchemeUrl;
+    const char* szMotdUrl, * szTipUrl, * szSchemeUrl;
+} GS;
 
 void __declspec(naked) AspectRatioCodeCave()
 {
@@ -245,6 +248,30 @@ void __declspec(naked) OptionsCodeCave()
     __asm jmp Exit
 }
 
+typedef int(__fastcall* HttpCallback)(int request, int result, const char* buffer, int bufferLen, void* param);
+
+int __fastcall ghttpGetA(const char *URL, int blocking, HttpCallback completedCallback, void *param)
+{
+    const char* prefix = "http://www.team17.com/gamespy/web/";
+    const size_t prefixLen = std::strlen(prefix);
+
+    if (std::strncmp(URL, prefix, prefixLen) == 0)
+    {
+        std::string path = GameSpyWebPath + "/" + (URL + prefixLen);
+        std::ifstream file(path, std::ios::binary);
+        if (file)
+        {
+            std::string content((std::istreambuf_iterator<char>(file)),
+                                 std::istreambuf_iterator<char>());
+            completedCallback(0, 0, content.c_str(), (int)content.size() + 1, param);
+            return 0;
+        }
+    }
+
+    completedCallback(0, 11, "", 0, param); // GHTTPFileNotFound
+    return 0;
+}
+
 void Init()
 {
     CIniReader iniReader("");
@@ -301,6 +328,7 @@ void Init()
     Options[39] = iniReader.ReadInteger("Options", "Option39", -1);
 
     GameSpyHost = iniReader.ReadString("GameSpy", "Host", "gamespy.com");
+    GameSpyWebPath = iniReader.ReadString("GameSpy", "WebPath", "http://www.team17.com/gamespy/web");
 
     // Main
 
@@ -369,7 +397,6 @@ void Init()
 
     if (GameSpyHost != "gamespy.com")
     {
-        static GameSpy GS;
         GS.ServerBrowser += GameSpyHost;
         GS.QueryReport += GameSpyHost;
         GS.ConnectionManager += GameSpyHost;
@@ -385,6 +412,34 @@ void Init()
         injector::WriteMemory(0x5E8A52, GS.GameStats.c_str(), true);
         injector::WriteMemory(0x5F4B1E, GS.GameStats.c_str(), true);
         injector::WriteMemory(0x5E8A4D, GS.SdkDev.c_str(), true);
+    }
+
+    if (GameSpyWebPath != "http://www.team17.com/gamespy/web")
+    {
+        if (GameSpyWebPath.find("http://") != std::string::npos)
+        {
+            GS.MotdUrl = GameSpyWebPath + "/motd/";
+            GS.TipUrl = GameSpyWebPath + "/leagues/tips/";
+            GS.SchemeUrl = GameSpyWebPath + "/leagues/schemes/";
+            GS.szMotdUrl = GS.MotdUrl.c_str();
+            GS.szTipUrl = GS.TipUrl.c_str();
+            GS.szSchemeUrl = GS.SchemeUrl.c_str();
+            injector::MakeNOP(0x5E77DB, 8);
+            injector::WriteMemory(0x5E77DB, 0x35FF, true); // push dword ptr ds
+            injector::WriteMemory(0x5E77DB + 2, &GS.szMotdUrl, true);
+            injector::MakeNOP(0x5E79A6, 13);
+            injector::WriteMemory(0x5E79A6, 0xF845C7, true); // push dword ptr ss: [ebp-0x8]
+            injector::WriteMemory(0x5E79A6 + 3, &GS.szTipUrl, true);
+            injector::MakeNOP(0x5E78F7, 8);
+            injector::WriteMemory(0x5E78F7, 0x35FF, true); // push dword ptr ds
+            injector::WriteMemory(0x5E78F7 + 2, &GS.szSchemeUrl, true);
+        }
+        else
+        {
+            injector::MakeCALL(0x5E788C, ghttpGetA);
+            injector::MakeCALL(0x5E7960, ghttpGetA);
+            injector::MakeCALL(0x5E7A49, ghttpGetA);
+        }
     }
 }
 
