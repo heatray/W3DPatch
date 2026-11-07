@@ -71,3 +71,7 @@ Check the ini files for available features.
 ![](.github/images/ingame_3840x1080.jpg "32:9")
 
 </details>
+
+## Building
+
+[Premake5](https://premake.github.io/) and Visual Studio 2022 are required for project generation and compilation. To generate a project, invoke `premake5.exe vs2022` in the main project directory.
