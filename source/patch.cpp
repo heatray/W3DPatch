@@ -41,8 +41,6 @@ struct GameSpy
     std::string PeerChat = "peerchat.";      // Chat
     std::string GameStats = "gamestats.";    // Game Statistics
     std::string SdkDev = "sdkdev.";          // SDK Dev
-    std::string MotdUrl, TipUrl, SchemeUrl;
-    const char* szMotdUrl, * szTipUrl, * szSchemeUrl;
 } GS;
 
 void __declspec(naked) AspectRatioCodeCave()
@@ -248,9 +246,11 @@ void __declspec(naked) OptionsCodeCave()
     __asm jmp Exit
 }
 
-typedef int(__fastcall* HttpCallback)(int request, int result, const char* buffer, int bufferLen, void* param);
+typedef int(__fastcall* HttpCallback_t)(int request, int result, const char* buffer, int bufferLen, void* param);
 
-int __fastcall ghttpGetA(const char *URL, int blocking, HttpCallback completedCallback, void *param)
+int(__fastcall* ghttpGetA)(const char* URL, int blocking, HttpCallback_t completedCallback, void* param) = (int(__fastcall*)(const char*, int, HttpCallback_t, void*))0x5F1FFB;
+
+int __fastcall ghttpGetA_Hook(const char *URL, int blocking, HttpCallback_t completedCallback, void *param)
 {
     const char* prefix = "http://www.team17.com/gamespy/web/";
     const size_t prefixLen = std::strlen(prefix);
@@ -258,6 +258,10 @@ int __fastcall ghttpGetA(const char *URL, int blocking, HttpCallback completedCa
     if (std::strncmp(URL, prefix, prefixLen) == 0)
     {
         std::string path = GameSpyWebPath + "/" + (URL + prefixLen);
+
+        if (GameSpyWebPath.find("http://") == 0)
+            return ghttpGetA(path.c_str(), blocking, completedCallback, param);
+
         std::ifstream file(path, std::ios::binary);
         if (file)
         {
@@ -266,10 +270,12 @@ int __fastcall ghttpGetA(const char *URL, int blocking, HttpCallback completedCa
             completedCallback(0, 0, content.c_str(), (int)content.size() + 1, param);
             return 0;
         }
+
+        completedCallback(0, 11, "", 0, param); // GHTTPFileNotFound
+        return 0;
     }
 
-    completedCallback(0, 11, "", 0, param); // GHTTPFileNotFound
-    return 0;
+    return ghttpGetA(URL, blocking, completedCallback, param);
 }
 
 void Init()
@@ -416,30 +422,9 @@ void Init()
 
     if (GameSpyWebPath != "http://www.team17.com/gamespy/web")
     {
-        if (GameSpyWebPath.find("http://") != std::string::npos)
-        {
-            GS.MotdUrl = GameSpyWebPath + "/motd/";
-            GS.TipUrl = GameSpyWebPath + "/leagues/tips/";
-            GS.SchemeUrl = GameSpyWebPath + "/leagues/schemes/";
-            GS.szMotdUrl = GS.MotdUrl.c_str();
-            GS.szTipUrl = GS.TipUrl.c_str();
-            GS.szSchemeUrl = GS.SchemeUrl.c_str();
-            injector::MakeNOP(0x5E77DB, 8);
-            injector::WriteMemory(0x5E77DB, 0x35FF, true); // push dword ptr ds
-            injector::WriteMemory(0x5E77DB + 2, &GS.szMotdUrl, true);
-            injector::MakeNOP(0x5E79A6, 13);
-            injector::WriteMemory(0x5E79A6, 0xF845C7, true); // push dword ptr ss: [ebp-0x8]
-            injector::WriteMemory(0x5E79A6 + 3, &GS.szTipUrl, true);
-            injector::MakeNOP(0x5E78F7, 8);
-            injector::WriteMemory(0x5E78F7, 0x35FF, true); // push dword ptr ds
-            injector::WriteMemory(0x5E78F7 + 2, &GS.szSchemeUrl, true);
-        }
-        else
-        {
-            injector::MakeCALL(0x5E788C, ghttpGetA);
-            injector::MakeCALL(0x5E7960, ghttpGetA);
-            injector::MakeCALL(0x5E7A49, ghttpGetA);
-        }
+        injector::MakeCALL(0x5E788C, ghttpGetA_Hook);
+        injector::MakeCALL(0x5E7960, ghttpGetA_Hook);
+        injector::MakeCALL(0x5E7A49, ghttpGetA_Hook);
     }
 }
 
